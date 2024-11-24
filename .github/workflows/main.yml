@@ -1,17 +1,17 @@
 name: Deploy to AWS Lambda
 on: [push]
 
+permissions:
+  id-token: write   # This is required for requesting the JWT
+  contents: read  
+
 jobs:
   lambda_demo:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write   # This is required for requesting the JWT
-      contents: read  
     steps:
       - uses: actions/checkout@v4
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
-        secrets: inherit
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

@@ -1,0 +1,60 @@
+Id,Name,Code
+1,California Maritime Academy,CSUMA
+7,"University of California, San Diego",UCSD
+11,"California Polytechnic University, San Luis Obispo",CPSLO
+12,"California State University, Monterey Bay",CSUMB
+21,"California State University, Hayward",CSUHAY
+23,"California State University, San Marcos",CSUSM
+24,"California State University, Stanislaus",CSUSTAN
+26,San Diego State University,SDSU
+29,"California State University, Fresno",CSUFRES
+39,San Jose State University,SJSU
+42,"California State University, Northridge",CSUN
+46,"University of California, Riverside",UCR
+50,"California State University, Dominguez Hills",CSUDH
+60,"California State University, Sacramento",CSUS
+75,"California Polytechnic University, Pomona",CPP
+76,"California State University, Los Angeles",CSULA
+79,"University of California, Berkeley",UCB
+81,"California State University, Long Beach",CSULB
+85,"California State University, San Bernardino",CSUSB
+88,Sonoma State University,SSU
+89,"University of California, Davis",UCD
+98,"California State University, Bakersfield",CSUB
+115,Humboldt State University,HSU
+116,San Francisco State University,SFSU
+117,"University of California, Los Angeles",UCLA
+120,"University of California, Irvine",UCI
+128,"University of California, Santa Barbara",UCSB
+129,"California State University, Fullerton",CSUFULL
+132,"University of California, Santa Cruz",UCSC
+141,"California State University, Chico",CSUC
+143,"California State University, Channel Islands",CSUCI
+144,"University of California, Merced",UCM
+201,California Lutheran University,CLU
+202,Humphreys University,HUMPHRYS
+204,Charles R. Drew University of Medicine and Science,CDU
+205,California Baptist University,CBU
+206,Fresno Pacific University,FPU
+207,Concordia University Irvine,CUI
+208,Laguna College of Art + Design,LCAD
+209,Loyola Marymount University,LMU
+210,Los Angeles Pacific University,LAPU
+211,Dominican University of California,DUC
+212,Mount Saint Mary's University Los Angeles,MSMU
+213,National University,NU
+214,Pepperdine University,PEPRDN
+215,Touro University Worldwide,TUW
+216,Menlo College,MENLO
+217,University of the Pacific,UOP
+218,University of La Verne,ULV
+219,Notre Dame de Namur University,NDNU
+220,University of Redlands,UOFR
+221,University of the West,UWEST
+222,Palo Alto University,PAU
+223,Reach University,RA
+224,Whittier College,WC
+225,Saint Mary's College of California,SMC
+226,Samuel Merritt University,SMU
+227,Santa Clara University,SCU
+228,Simpson University,SU

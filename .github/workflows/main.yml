@@ -29,3 +29,6 @@ jobs:
       - name: Update Whitelist Lambda
         run: |
           aws lambda update-function-code --function-name getWhitelistArticulations --zip-file fileb://./lambda_zip.zip
+      - name: Update Templates Lambda
+        run: |
+          aws lambda update-function-code --function-name parseTemplates --zip-file fileb://./lambda_zip.zip

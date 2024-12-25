@@ -97,8 +97,8 @@ def parseArticulationRequirements(fyId, cccId, yr, majorId):
                                     "coursePrefix": coursePrefix,
                                     "courseNumber": courseNumber,
                                     "courseId": courseId,
-                                } not in requiredCourses:
-                                    requiredCourses.append(
+                                } not in reqs:
+                                    reqs.append(
                                         {
                                             "type": "Course",
                                             "courseTitle": courseTitle,

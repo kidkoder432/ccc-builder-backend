@@ -5,9 +5,7 @@ from parseTemplates import *
 
 def lambda_handler_primary(event, context):
 
-
-    body = json.loads(event["body"])
-    cccId, fyId, yr, majorId = parseEvent(event, body)
+    cccId, fyId, yr, majorId = parseEvent(event)
 
     articulations = getArticulations(fyId, cccId, yr, majorId)
 
@@ -32,9 +30,7 @@ def lambda_handler_whitelist(event, context):
 
 def lambda_handler_template(event, context):
 
-    body = json.loads(event["body"])
-
-    cccId, fyId, yr, majorId = parseEvent(event, body)
+    cccId, fyId, yr, majorId = parseEvent(event)
 
     return {
         "statusCode": 200,
@@ -52,6 +48,7 @@ def parseEvent(event, body):
             "majorId", "75/113/to/79/Major/fc50cced-05c2-43c7-7dd5-08dcb87d5deb"
         )
     except KeyError:
+        body = json.loads(event["body"])
         cccId = body.get("cccId", 113)
         fyId = body.get("fyId", 79)
         yr = body.get("yr", 75)

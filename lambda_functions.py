@@ -38,7 +38,7 @@ def lambda_handler_template(event, context):
     }
 
 
-def parseEvent(event, body):
+def parseEvent(event):
     try:
         params = event["queryStringParameters"]
         cccId = params.get("cccId", 113)

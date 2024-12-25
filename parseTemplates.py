@@ -1,5 +1,6 @@
 from getArticulationsFromPrimaryCCC import *
 
+
 def parseArticulationRequirements(fyId, cccId, yr, majorId):
 
     fyId = str(fyId)
@@ -53,7 +54,7 @@ def parseArticulationRequirements(fyId, cccId, yr, majorId):
                 instructions = item["instruction"]
 
                 if instructions:
-                    if instructions["conjunction"] == "Or":
+                    if instructions.get("conjunction") == "Or":
                         groupObj["conjunction"] = "Or"
                     else:
                         groupObj["conjunction"] = "And"
@@ -85,18 +86,25 @@ def parseArticulationRequirements(fyId, cccId, yr, majorId):
                                 courseTitle = req["course"]["courseTitle"]
                                 coursePrefix = req["course"]["prefix"]
                                 courseNumber = req["course"]["courseNumber"]
+                                courseId = (
+                                    str(req["course"]["courseIdentifierParentId"])
+                                    + "_"
+                                    + termId
+                                )
                                 if {
                                     "type": "Course",
                                     "courseTitle": courseTitle,
                                     "coursePrefix": coursePrefix,
                                     "courseNumber": courseNumber,
-                                } not in reqs:
-                                    reqs.append(
+                                    "courseId": courseId,
+                                } not in requiredCourses:
+                                    requiredCourses.append(
                                         {
                                             "type": "Course",
                                             "courseTitle": courseTitle,
                                             "coursePrefix": coursePrefix,
                                             "courseNumber": courseNumber,
+                                            "courseId": courseId,
                                         }
                                     )
 

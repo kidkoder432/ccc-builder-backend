@@ -186,11 +186,17 @@ def getArticulations(fyId, cccId, yr, majorId):
                                     courseTitle = req["course"]["courseTitle"]
                                     coursePrefix = req["course"]["prefix"]
                                     courseNumber = req["course"]["courseNumber"]
+                                    courseId = (
+                                        str(req["course"]["courseIdentifierParentId"])
+                                        + "_"
+                                        + termId
+                                    )
                                     if {
                                         "type": "Course",
                                         "courseTitle": courseTitle,
                                         "coursePrefix": coursePrefix,
                                         "courseNumber": courseNumber,
+                                        "courseId": courseId,
                                     } not in requiredCourses:
                                         requiredCourses.append(
                                             {
@@ -198,6 +204,7 @@ def getArticulations(fyId, cccId, yr, majorId):
                                                 "courseTitle": courseTitle,
                                                 "coursePrefix": coursePrefix,
                                                 "courseNumber": courseNumber,
+                                                "courseId": courseId,
                                             }
                                         )
 
@@ -227,14 +234,15 @@ def getArticulations(fyId, cccId, yr, majorId):
                     courseNumber = articulation["articulation"]["course"][
                         "courseNumber"
                     ]
+                    courseId = articulation["articulation"]["course"][
+                        "courseIdentifierParentId"
+                    ]
                     print(f"{courseTitle} ({coursePrefix} {courseNumber})")
 
                     for course in requiredCourses[:]:
                         if (
                             course["type"] == "Course"
-                            and course["courseTitle"] == courseTitle
-                            and course["courseNumber"] == courseNumber
-                            and course["coursePrefix"] == coursePrefix
+                            and course["courseId"] == str(courseId) + "_" + termId
                         ):
                             requiredCourses.remove(course)
                             break
@@ -390,13 +398,15 @@ def getArticulations(fyId, cccId, yr, majorId):
                         course = requirement["courseTitle"]
                         prefix = requirement["coursePrefix"]
                         number = requirement["courseNumber"]
-                        print(f"#{i+1}: {course} ({prefix} {number})")
+                        courseId = requirement["courseId"]
+                        print(f"#{i+1}: {course} ({prefix} {number}) [{courseId}]")
                         returnObj["nonArticulatedCourses"].append(
                             {
                                 "type": "Course",
                                 "courseTitle": course,
                                 "coursePrefix": prefix,
                                 "courseNumber": number,
+                                "courseId": courseId,
                             }
                         )
                     elif requirement["type"] == "NonArticulated":

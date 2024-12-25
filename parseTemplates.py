@@ -1,9 +1,4 @@
-import re
-from numpy import require
 from getArticulationsFromPrimaryCCC import *
-
-from pyperclip import copy
-
 
 def parseArticulationRequirements(fyId, cccId, yr, majorId):
 
@@ -51,7 +46,6 @@ def parseArticulationRequirements(fyId, cccId, yr, majorId):
 
         if r.status_code == 200:
             templateAssets = json.loads(r.json()["result"]["templateAssets"])
-            copy(json.dumps(templateAssets, indent=4))
         for idx, item in enumerate(templateAssets):
             if item["type"] == "RequirementGroup":
 

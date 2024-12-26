@@ -53,12 +53,18 @@ def parseArticulationRequirements(fyId, cccId, yr, majorId):
                 groupObj = {"requiredCourses": []}
                 instructions = item["instruction"]
 
+                isSectionNFollowing = False
+                sectionNCourses = 0
                 if instructions:
                     if instructions.get("conjunction") == "Or":
                         groupObj["conjunction"] = "Or"
                     else:
                         groupObj["conjunction"] = "And"
 
+                    if instructions["type"] == "NFromConjunction":
+                        isSectionNFollowing = True
+                        sectionNCourses = int(instructions["amount"])
+                
                 for section in item["sections"]:
 
                     obj = {}
@@ -74,9 +80,14 @@ def parseArticulationRequirements(fyId, cccId, yr, majorId):
                                 )
                                 obj["type"] = "NCourses"
                                 obj["amount"] = ncourses
+
                     else:
                         obj["type"] = "AllCourses"
                         print("Complete the following:")
+
+                    if isSectionNFollowing and sectionNCourses > 0:
+                        obj["type"] = "NCourses"
+                        obj["amount"] = sectionNCourses
 
                     reqs = []
                     for ridx, row in enumerate(section["rows"]):

@@ -1,3 +1,4 @@
+from calendar import c
 from csv import reader
 import requests
 import json
@@ -90,7 +91,6 @@ def removeDuplicateArticulations(l):
     courses = []
     newList = []
     for articulation in l:
-        pprint(articulation["articulation"])
         if articulation["articulation"]["type"] == "Course":
             if (
                 articulation["articulation"]["course"]["courseIdentifierParentId"]
@@ -191,33 +191,42 @@ def getArticulations(fyId, cccId, yr, majorId):
                                         + "_"
                                         + termId
                                     )
-                                    if {
+
+                                    reqobj = {
                                         "type": "Course",
                                         "courseTitle": courseTitle,
                                         "coursePrefix": coursePrefix,
                                         "courseNumber": courseNumber,
                                         "courseId": courseId,
-                                    } not in requiredCourses:
-                                        requiredCourses.append(
-                                            {
-                                                "type": "Course",
-                                                "courseTitle": courseTitle,
-                                                "coursePrefix": coursePrefix,
-                                                "courseNumber": courseNumber,
-                                                "courseId": courseId,
-                                            }
-                                        )
+                                        "credits": req["course"]["maxUnits"],
+                                    }
+
+                                    if reqobj not in requiredCourses:
+                                        requiredCourses.append(reqobj)
 
                                     print(
-                                        f"{idx}: {courseTitle} ({coursePrefix} {courseNumber})"
+                                        f"{idx}: {courseTitle} ({coursePrefix} {courseNumber}) [{courseId}]"
                                     )
 
                                 elif req["type"] == "Series":
                                     seriesTitle = req["series"]["name"]
+                                    print(f"{idx}: {seriesTitle}")
+
+                                    seriesId = ""
+
+                                    for course in req["series"]["courses"]:
+                                        seriesId += (
+                                            str(course["courseIdentifierParentId"])
+                                            + "_"
+                                        )
+
+                                    seriesId += termId
+
                                     requiredCourses.append(
                                         {
                                             "type": "Series",
                                             "seriesTitle": seriesTitle,
+                                            "seriesId": seriesId,
                                         }
                                     )
 
@@ -234,9 +243,11 @@ def getArticulations(fyId, cccId, yr, majorId):
                     courseNumber = articulation["articulation"]["course"][
                         "courseNumber"
                     ]
-                    courseId = articulation["articulation"]["course"][
-                        "courseIdentifierParentId"
-                    ]
+                    courseId = str(
+                        articulation["articulation"]["course"][
+                            "courseIdentifierParentId"
+                        ]
+                    )
                     print(f"{courseTitle} ({coursePrefix} {courseNumber})")
 
                     for course in requiredCourses[:]:
@@ -260,6 +271,7 @@ def getArticulations(fyId, cccId, yr, majorId):
                                 "courseTitle": courseTitle,
                                 "coursePrefix": coursePrefix,
                                 "courseNumber": courseNumber,
+                                "courseId": (str(courseId) + "_" + termId),
                                 "reason": articulation["articulation"][
                                     "sendingArticulation"
                                 ]["noArticulationReason"],
@@ -273,6 +285,7 @@ def getArticulations(fyId, cccId, yr, majorId):
                             "courseTitle": courseTitle,
                             "courseNumber": courseNumber,
                             "coursePrefix": coursePrefix,
+                            "courseId": courseId,
                             "articulationOptions": [],
                         }
                     )
@@ -296,12 +309,14 @@ def getArticulations(fyId, cccId, yr, majorId):
                                     courseTitle = course["courseTitle"]
                                     coursePrefix = course["prefix"]
                                     courseNumber = course["courseNumber"]
+                                    courseId = str(course["courseIdentifierParentId"])
 
                                     option.append(
                                         {
                                             "courseTitle": courseTitle,
                                             "courseNumber": courseNumber,
                                             "coursePrefix": coursePrefix,
+                                            "courseId": courseId,
                                         }
                                     )
                                     if note:
@@ -324,21 +339,30 @@ def getArticulations(fyId, cccId, yr, majorId):
                             "seriesTitle": articulation["articulation"]["series"][
                                 "name"
                             ],
+                            "seriesId": "_".join(
+                                [
+                                    str(c["courseIdentifierParentId"])
+                                    for c in articulation["articulation"]["series"][
+                                        "courses"
+                                    ]
+                                ]
+                            ),
                             "courseSeries": [],
                             "articulationOptions": [],
                         }
                     )
-                    for course in requiredCourses[:]:
+                    for req in requiredCourses[:]:
                         if (
-                            course["type"] == "Series"
-                            and course["seriesTitle"]
-                            == articulation["articulation"]["series"]["name"]
+                            req["type"] == "Series"
+                            and req["seriesId"]
+                            == returnObj["articulatedCourses"][-1]["seriesId"]
                         ):
-                            requiredCourses.remove(course)
+                            requiredCourses.remove(req)
                     for course in articulation["articulation"]["series"]["courses"]:
                         courseTitle = course["courseTitle"]
                         coursePrefix = course["prefix"]
                         courseNumber = course["courseNumber"]
+                        courseId = str(course["courseIdentifierParentId"])
                         print(f"{courseTitle} ({coursePrefix} {courseNumber}) AND")
 
                         returnObj["articulatedCourses"][-1]["courseSeries"].append(
@@ -346,6 +370,7 @@ def getArticulations(fyId, cccId, yr, majorId):
                                 "courseTitle": courseTitle,
                                 "courseNumber": courseNumber,
                                 "coursePrefix": coursePrefix,
+                                "courseId": courseId,
                             }
                         )
 
@@ -367,12 +392,14 @@ def getArticulations(fyId, cccId, yr, majorId):
                                     courseTitle = course["courseTitle"]
                                     coursePrefix = course["prefix"]
                                     courseNumber = course["courseNumber"]
+                                    courseId = str(course["courseIdentifierParentId"])
 
                                     option.append(
                                         {
                                             "courseTitle": courseTitle,
                                             "courseNumber": courseNumber,
                                             "coursePrefix": coursePrefix,
+                                            "courseId": courseId,
                                         }
                                     )
                                     print(
@@ -392,13 +419,14 @@ def getArticulations(fyId, cccId, yr, majorId):
                             {
                                 "type": "Series",
                                 "seriesTItle": title,
+                                "seriesId": requirement["seriesId"],
                             }
                         )
                     elif requirement["type"] == "Course":
                         course = requirement["courseTitle"]
                         prefix = requirement["coursePrefix"]
                         number = requirement["courseNumber"]
-                        courseId = requirement["courseId"]
+                        courseId = str(requirement["courseId"])
                         print(f"#{i+1}: {course} ({prefix} {number}) [{courseId}]")
                         returnObj["nonArticulatedCourses"].append(
                             {
@@ -413,6 +441,7 @@ def getArticulations(fyId, cccId, yr, majorId):
                         course = requirement["courseTitle"]
                         prefix = requirement["coursePrefix"]
                         number = requirement["courseNumber"]
+                        courseId = str(requirement["courseId"])
                         reason = requirement["reason"]
                         print(f"#{i+1}: {course} ({prefix} {number})")
                         print(f'NOT ARTICULATED: "{reason}"')
@@ -423,6 +452,7 @@ def getArticulations(fyId, cccId, yr, majorId):
                                 "courseTitle": course,
                                 "coursePrefix": prefix,
                                 "courseNumber": number,
+                                "courseId": courseId,
                                 "reason": reason,
                             }
                         )

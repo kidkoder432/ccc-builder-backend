@@ -130,10 +130,8 @@ def parseArticulationRequirements(fyId, cccId, yr, majorId):
                                     "coursePrefix": coursePrefix,
                                     "courseNumber": courseNumber,
                                     "courseId": courseId,
+                                    "credits": req["course"]["maxUnits"]
                                 }
-
-                                if needCreditInfo:
-                                    reqobj["credits"] = req["course"]["maxUnits"]
 
                                 if reqobj not in reqs:
                                     reqs.append(reqobj)
@@ -145,10 +143,22 @@ def parseArticulationRequirements(fyId, cccId, yr, majorId):
                             elif req["type"] == "Series":
                                 seriesTitle = req["series"]["name"]
                                 print(f"{idx}: {seriesTitle}")
+
+                                seriesId = ""
+
+                                for course in req["series"]["courses"]:
+                                    seriesId += (
+                                        str(course["courseIdentifierParentId"])
+                                        + "_"
+                                    )
+                                
+                                seriesId += termId
+
                                 reqs.append(
                                     {
                                         "type": "Series",
                                         "seriesTitle": seriesTitle,
+                                        "seriesId": seriesId
                                     }
                                 )
 

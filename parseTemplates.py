@@ -55,16 +55,25 @@ def parseArticulationRequirements(fyId, cccId, yr, majorId):
 
                 isSectionNFollowing = False
                 sectionNCourses = 0
+                sectionCredits = 0
+                needCreditInfo = False
                 if instructions:
                     if instructions.get("conjunction") == "Or":
                         groupObj["conjunction"] = "Or"
                     else:
                         groupObj["conjunction"] = "And"
 
-                    if instructions["type"] == "NFromConjunction":
+                    if instructions["type"] == "NFromArea" and instructions.get(
+                        "amountUnitType", None
+                    ) != "Course":
+                        needCreditInfo = True
+                        sectionCredits = int(instructions["amount"])
+                    
+                    elif instructions["type"] in ("NFromConjunction", "NFromArea"):
                         isSectionNFollowing = True
                         sectionNCourses = int(instructions["amount"])
-                
+
+                   
                 for section in item["sections"]:
 
                     obj = {}
@@ -81,13 +90,25 @@ def parseArticulationRequirements(fyId, cccId, yr, majorId):
                                 obj["type"] = "NCourses"
                                 obj["amount"] = ncourses
 
-                    else:
-                        obj["type"] = "AllCourses"
-                        print("Complete the following:")
-
-                    if isSectionNFollowing and sectionNCourses > 0:
+                    elif isSectionNFollowing and sectionNCourses > 0:
                         obj["type"] = "NCourses"
                         obj["amount"] = sectionNCourses
+
+                        print(
+                            f"Complete {sectionNCourses} course{'s' if sectionNCourses > 1 else ''} from the following:"
+                        )
+
+                    elif needCreditInfo and sectionCredits > 0:
+                        obj["type"] = "NCredits"
+                        obj["amount"] = sectionCredits
+
+                        print(
+                            f"Complete {sectionCredits} credit{'s' if sectionCredits > 1 else ''} from the following:"
+                        )
+
+                    else:
+                        obj["type"] = "AllCourses"
+                        print("Complete all courses from the following:")
 
                     reqs = []
                     for ridx, row in enumerate(section["rows"]):
@@ -102,22 +123,20 @@ def parseArticulationRequirements(fyId, cccId, yr, majorId):
                                     + "_"
                                     + termId
                                 )
-                                if {
+
+                                reqobj = {
                                     "type": "Course",
                                     "courseTitle": courseTitle,
                                     "coursePrefix": coursePrefix,
                                     "courseNumber": courseNumber,
                                     "courseId": courseId,
-                                } not in reqs:
-                                    reqs.append(
-                                        {
-                                            "type": "Course",
-                                            "courseTitle": courseTitle,
-                                            "coursePrefix": coursePrefix,
-                                            "courseNumber": courseNumber,
-                                            "courseId": courseId,
-                                        }
-                                    )
+                                }
+
+                                if needCreditInfo:
+                                    reqobj["credits"] = req["course"]["maxUnits"]
+
+                                if reqobj not in reqs:
+                                    reqs.append(reqobj)
 
                                 print(
                                     f"{idx}: {courseTitle} ({coursePrefix} {courseNumber})"

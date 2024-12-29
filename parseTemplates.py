@@ -144,21 +144,22 @@ def parseArticulationRequirements(fyId, cccId, yr, majorId):
                                 seriesTitle = req["series"]["name"]
                                 print(f"{idx}: {seriesTitle}")
 
-                                seriesId = ""
+                                seriesId = "-".join(
+                                    [
+                                        str(c["courseIdentifierParentId"])
+                                        for c in req["series"]["courses"]
+                                    ]
+                                )
 
-                                for course in req["series"]["courses"]:
-                                    seriesId += (
-                                        str(course["courseIdentifierParentId"])
-                                        + "_"
-                                    )
-                                
-                                seriesId += termId
+                                seriesId += ("_" + termId)
 
                                 reqs.append(
                                     {
                                         "type": "Series",
                                         "seriesTitle": seriesTitle,
-                                        "seriesId": seriesId
+                                        "seriesId": seriesId,
+                                        "credits": str(sum([c["maxUnits"] for c in req["series"]["courses"]])),
+
                                     }
                                 )
 

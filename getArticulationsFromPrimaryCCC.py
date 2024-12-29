@@ -212,15 +212,14 @@ def getArticulations(fyId, cccId, yr, majorId):
                                     seriesTitle = req["series"]["name"]
                                     print(f"{idx}: {seriesTitle}")
 
-                                    seriesId = ""
+                                    seriesId = "-".join(
+                                        [
+                                            str(c["courseIdentifierParentId"])
+                                            for c in req["series"]["courses"]
+                                        ]
+                                    )
 
-                                    for course in req["series"]["courses"]:
-                                        seriesId += (
-                                            str(course["courseIdentifierParentId"])
-                                            + "_"
-                                        )
-
-                                    seriesId += termId
+                                    seriesId += "_" + termId
 
                                     requiredCourses.append(
                                         {
@@ -248,6 +247,7 @@ def getArticulations(fyId, cccId, yr, majorId):
                             "courseIdentifierParentId"
                         ]
                     )
+                    courseCredits = articulation["articulation"]["course"]["maxUnits"]
                     print(f"{courseTitle} ({coursePrefix} {courseNumber})")
 
                     for course in requiredCourses[:]:
@@ -286,6 +286,7 @@ def getArticulations(fyId, cccId, yr, majorId):
                             "courseNumber": courseNumber,
                             "coursePrefix": coursePrefix,
                             "courseId": courseId,
+                            "credits": courseCredits,
                             "articulationOptions": [],
                         }
                     )
@@ -339,9 +340,17 @@ def getArticulations(fyId, cccId, yr, majorId):
                             "seriesTitle": articulation["articulation"]["series"][
                                 "name"
                             ],
-                            "seriesId": "_".join(
+                            "seriesId": "-".join(
                                 [
                                     str(c["courseIdentifierParentId"])
+                                    for c in articulation["articulation"]["series"][
+                                        "courses"
+                                    ]
+                                ]
+                            ),
+                            "credits": sum(
+                                [
+                                    c["maxUnits"]
                                     for c in articulation["articulation"]["series"][
                                         "courses"
                                     ]
@@ -363,6 +372,7 @@ def getArticulations(fyId, cccId, yr, majorId):
                         coursePrefix = course["prefix"]
                         courseNumber = course["courseNumber"]
                         courseId = str(course["courseIdentifierParentId"])
+                        courseCredits = course["maxUnits"]
                         print(f"{courseTitle} ({coursePrefix} {courseNumber}) AND")
 
                         returnObj["articulatedCourses"][-1]["courseSeries"].append(
@@ -371,6 +381,7 @@ def getArticulations(fyId, cccId, yr, majorId):
                                 "courseNumber": courseNumber,
                                 "coursePrefix": coursePrefix,
                                 "courseId": courseId,
+                                "credits": courseCredits,
                             }
                         )
 

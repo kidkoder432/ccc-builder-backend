@@ -63,17 +63,17 @@ def parseArticulationRequirements(fyId, cccId, yr, majorId):
                     else:
                         groupObj["conjunction"] = "And"
 
-                    if instructions["type"] == "NFromArea" and instructions.get(
-                        "amountUnitType", None
-                    ) != "Course":
+                    if (
+                        instructions["type"] == "NFromArea"
+                        and instructions.get("amountUnitType", None) != "Course"
+                    ):
                         needCreditInfo = True
                         sectionCredits = int(instructions["amount"])
-                    
+
                     elif instructions["type"] in ("NFromConjunction", "NFromArea"):
                         isSectionNFollowing = True
                         sectionNCourses = int(instructions["amount"])
 
-                   
                 for section in item["sections"]:
 
                     obj = {}
@@ -82,7 +82,19 @@ def parseArticulationRequirements(fyId, cccId, yr, majorId):
 
                     if section["advisements"]:
                         for adv in section["advisements"]:
-                            if adv["type"] == "NFollowing":
+                            if (
+                                adv["type"] == "NFollowing"
+                                and adv.get("amountUnitType", None) != "Course"
+                            ):
+                                needCreditInfo = True
+                                sectionCredits = int(adv["amount"])
+                                print(
+                                    f"Complete {sectionCredits} credit{'s' if sectionCredits > 1 else ''} from the following:"
+                                )
+                                obj["type"] = "NCredits"
+                                obj["amount"] = sectionCredits
+
+                            elif adv["type"] == "NFollowing":
                                 ncourses = int(adv["amount"])
                                 print(
                                     f"Complete {ncourses} course{"s" if ncourses > 1 else ""} from the following:"
@@ -130,7 +142,7 @@ def parseArticulationRequirements(fyId, cccId, yr, majorId):
                                     "coursePrefix": coursePrefix,
                                     "courseNumber": courseNumber,
                                     "courseId": courseId,
-                                    "credits": req["course"]["maxUnits"]
+                                    "credits": req["course"]["maxUnits"],
                                 }
 
                                 if reqobj not in reqs:
@@ -151,15 +163,21 @@ def parseArticulationRequirements(fyId, cccId, yr, majorId):
                                     ]
                                 )
 
-                                seriesId += ("_" + termId)
+                                seriesId += "_" + termId
 
                                 reqs.append(
                                     {
                                         "type": "Series",
                                         "seriesTitle": seriesTitle,
                                         "seriesId": seriesId,
-                                        "credits": str(sum([c["maxUnits"] for c in req["series"]["courses"]])),
-
+                                        "credits": str(
+                                            sum(
+                                                [
+                                                    c["maxUnits"]
+                                                    for c in req["series"]["courses"]
+                                                ]
+                                            )
+                                        ),
                                     }
                                 )
 

@@ -22,7 +22,7 @@ jobs:
           cd venv
           source bin/activate
           pip install -r requirements.txt
-          pip install snowflake-connector-python --platform manylinux2010_x86_64 --only-binary=:all:
+          pip install snowflake-connector-python
           deactivate
           cd ..
           zip -r lambda_zip.zip *

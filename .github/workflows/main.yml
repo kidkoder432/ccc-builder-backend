@@ -19,12 +19,8 @@ jobs:
       - name: Creating deployment zip
         run: |
           sudo apt install zip
-          cd venv
-          source bin/activate
-          pip install -r requirements.txt
-          pip install snowflake-connector-python
-          deactivate
-          cd ..
+          pip install -r requirements.txt -t .
+          pip install snowflake-connector-python -t .
           zip -r lambda_zip.zip *
           ls .
       - name: Update Primary Lambda

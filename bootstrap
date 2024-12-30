@@ -2,5 +2,6 @@
 
 cd $LAMBDA_TASK_ROOT
 
-source venv/bin/activate
-./venv/bin/python3 runtime.py
+ls /usr/local/bin
+
+/usr/local/bin/python3 runtime.py

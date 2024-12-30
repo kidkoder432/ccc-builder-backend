@@ -19,8 +19,12 @@ jobs:
       - name: Creating deployment zip
         run: |
           sudo apt install zip
-          pip install -r requirements.txt -t .
-          pip install snowflake-connector-python --platform manylinux2010_x86_64 --only-binary=:all: -t .
+          cd venv
+          source bin/activate
+          pip install -r requirements.txt
+          pip install snowflake-connector-python --platform manylinux2010_x86_64 --only-binary=:all:
+          deactivate
+          cd ..
           zip -r lambda_zip.zip *
           ls .
       - name: Update Primary Lambda

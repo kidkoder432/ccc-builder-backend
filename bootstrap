@@ -1,4 +1,4 @@
 #!/bin/sh
 
 cd $LAMBDA_TASK_ROOT
-/usr/bin/python3.11 runtime.py
+./python3 runtime.py

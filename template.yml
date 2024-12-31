@@ -21,6 +21,10 @@ Resources:
       FunctionUrlConfig:
         AuthType: NONE
         InvokeMode: RESPONSE_STREAM
+        Cors:
+          AllowMethods: "'*'"
+          AllowHeaders: "'*'"
+          AllowOrigin: "'*'"
       Tracing: Active
     Metadata:
       Dockerfile: Dockerfile

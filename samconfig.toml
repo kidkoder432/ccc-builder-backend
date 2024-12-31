@@ -4,6 +4,6 @@ stack_name = "ccc-builder-backend"
 resolve_s3 = true
 s3_prefix = "ccc-builder-backend"
 region = "us-west-1"
-confirm_changeset = true
+confirm_changeset = false
 capabilities = "CAPABILITY_IAM"
 image_repositories = ["PrimaryCCCFunction=436215616486.dkr.ecr.us-west-1.amazonaws.com/cccbuilderbackende3cc5325/primarycccfunctionffb92311repo"]

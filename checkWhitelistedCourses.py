@@ -1,9 +1,9 @@
 from getArticulationsFromPrimaryCCC import getArticulations
 
-def checkArticulations(fyId, cccId, yr, majorId, cccCourses, artics={}):
+async def checkArticulations(session, fyId, cccId, yr, majorId, cccCourses, artics={}):
     
     if not artics: 
-        artics = getArticulations(fyId, cccId, yr, majorId)
+        artics = await getArticulations(session, fyId, cccId, yr, majorId)
 
     articulatedCourses = []
 

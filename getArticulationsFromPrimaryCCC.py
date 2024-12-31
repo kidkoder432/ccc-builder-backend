@@ -1,11 +1,7 @@
-from calendar import c
 from csv import reader
-import requests
+import aiohttp
+import asyncio
 import json
-
-from pprint import pprint
-from pyperclip import copy
-
 
 MAJORS_URL = "https://assist.org/api/agreements?receivingInstitutionId={rid}&sendingInstitutionId={sid}&academicYearId={yr}&categoryCode=major"
 ARTICS_URL = "https://assist.org/api/articulation/Agreements?Key={key}"
@@ -39,36 +35,15 @@ def getMajorInfo(majorId, data):
             return major["label"]
 
 
-def getMajorData(fyId, cccId, yr):
-    headers = {
-        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-        "accept-encoding": "gzip, deflate, br, zstd",
-        "accept-language": "en-US,en;q=0.9",
-        "cache-control": "max-age=0",
-        "connection": "keep-alive",
-        "cookie": "ARRAffinity=0f60106f5ba8f78edacc2698bdde648fc9ccae752f545c6d9b8d13c2be8a63f2; ARRAffinitySameSite=0f60106f5ba8f78edacc2698bdde648fc9ccae752f545c6d9b8d13c2be8a63f2",
-        "dnt": "1",
-        "host": "assist.org",
-        "prefer": "safe",
-        "sec-ch-ua": '"Chromium";v="130", "Microsoft Edge";v="130", "Not?A_Brand";v="99"',
-        "sec-ch-ua-mobile": "?0",
-        "sec-ch-ua-platform": '"Windows"',
-        "sec-fetch-dest": "document",
-        "sec-fetch-mode": "navigate",
-        "sec-fetch-site": "none",
-        "sec-fetch-user": "?1",
-        "upgrade-insecure-requests": "1",
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0",
-    }
+async def getMajorData(session, fyId, cccId, yr):
 
-    r = requests.get(MAJORS_URL.format(rid=fyId, sid=cccId, yr=yr), headers=headers)
+    async with session.get(MAJORS_URL.format(rid=fyId, sid=cccId, yr=yr)) as r:
 
-    if r.status_code == 200:
-        majors = r.json()
-    else:
-        raise requests.HTTPError("Failed to get majors")
-
-    return majors
+        if r.status == 200:
+            data = await r.json(content_type=None)
+            return data
+        else:
+            raise aiohttp.ClientError("Failed to get majors")
 
 
 def getTerm(year):
@@ -113,7 +88,7 @@ def getMajor(name="undefined", data={}):
             return major["key"]
 
 
-def getArticulations(fyId, cccId, yr, majorId):
+async def getArticulations(session, fyId, cccId, yr, majorId):
 
     returnObj = {}
 
@@ -121,7 +96,7 @@ def getArticulations(fyId, cccId, yr, majorId):
     fyId, fyName, fyCode = getFYInfo(fyId)
 
     termName, termId = getYearInfo(yr)
-    majorData = getMajorData(fyId, cccId, yr)
+    majorData = await getMajorData(session, fyId, cccId, yr)
     majorName = getMajorInfo(majorId, majorData)
 
     returnObj["cccInfo"] = {"id": cccId, "name": cccName, "code": cccCode}
@@ -137,36 +112,12 @@ def getArticulations(fyId, cccId, yr, majorId):
     returnObj["articulatedCourses"] = []
     returnObj["nonArticulatedCourses"] = []
 
-    headers = {
-        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-        "accept-encoding": "gzip, deflate, br, zstd",
-        "accept-language": "en-US,en;q=0.9",
-        "cache-control": "max-age=0",
-        "connection": "keep-alive",
-        "cookie": "ARRAffinity=0f60106f5ba8f78edacc2698bdde648fc9ccae752f545c6d9b8d13c2be8a63f2; ARRAffinitySameSite=0f60106f5ba8f78edacc2698bdde648fc9ccae752f545c6d9b8d13c2be8a63f2",
-        "dnt": "1",
-        "host": "assist.org",
-        "prefer": "safe",
-        "sec-ch-ua": '"Chromium";v="130", "Microsoft Edge";v="130", "Not?A_Brand";v="99"',
-        "sec-ch-ua-mobile": "?0",
-        "sec-ch-ua-platform": '"Windows"',
-        "sec-fetch-dest": "document",
-        "sec-fetch-mode": "navigate",
-        "sec-fetch-site": "none",
-        "sec-fetch-user": "?1",
-        "upgrade-insecure-requests": "1",
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0",
-    }
+    async with session.get(
+        ARTICS_URL.format(key=majorId),
+    ) as r:
 
-    r = requests.get(MAJORS_URL.format(rid=fyId, sid=cccId, yr=yr), headers=headers)
-
-    if r.status_code == 200:
-
-        print(ARTICS_URL.format(key=majorId))
-        r = requests.get(ARTICS_URL.format(key=majorId))
-
-        if r.status_code == 200:
-            arts = r.json()
+        if r.status == 200:
+            arts = await r.json()
 
             requiredCourses = []
             print("Major: ", arts["result"]["name"])
@@ -471,41 +422,48 @@ def getArticulations(fyId, cccId, yr, majorId):
     return returnObj
 
 
+async def main():
+    async with aiohttp.ClientSession() as session:
+        print("Enter your primary CCC name or code: ", end="")
+        name = input()
+        if len(name) < 8:
+            code = name.upper()
+            print("CC ID is:", getId(code=code))
+            cccId = getId(code=code)
+        else:
+            print("CC ID is:", getId(name=name))
+            cccId = getId(name=name)
+
+        print("Enter the name or code of the four year university: ", end="")
+        name = input()
+        if len(name) < 8:
+            code = name.upper()
+            print("FY ID is:", getId(code=code))
+            fyId = getId(code=code)
+        else:
+            print("FY ID is:", getId(name=name))
+            fyId = getId(name=name)
+
+        print("Enter the academic year: ", end="")
+        year = input()
+        yr = getTerm(year)
+        print("Term is :", yr)
+        print(MAJORS_URL.format(rid=fyId, sid=cccId, yr=yr))
+
+        majors = getMajorData(session, fyId, cccId, yr)
+
+        majorName = input("Enter the name of the major: ")
+        majorId = getMajor(majorName, majors)
+        print("Major ID is:", majorId)
+
+        data = await getArticulations(session, fyId, cccId, yr, majorId)
+
+        json.dump(
+            data,
+            open("output.json", "w"),
+            indent=4,
+        )
+
+
 if __name__ == "__main__":
-    print("Enter your primary CCC name or code: ", end="")
-    name = input()
-    if len(name) < 8:
-        code = name.upper()
-        print("CC ID is:", getId(code=code))
-        cccId = getId(code=code)
-    else:
-        print("CC ID is:", getId(name=name))
-        cccId = getId(name=name)
-
-    print("Enter the name or code of the four year university: ", end="")
-    name = input()
-    if len(name) < 8:
-        code = name.upper()
-        print("FY ID is:", getId(code=code))
-        fyId = getId(code=code)
-    else:
-        print("FY ID is:", getId(name=name))
-        fyId = getId(name=name)
-
-    print("Enter the academic year: ", end="")
-    year = input()
-    yr = getTerm(year)
-    print("Term is :", yr)
-    print(MAJORS_URL.format(rid=fyId, sid=cccId, yr=yr))
-
-    majors = getMajorData(fyId, cccId, yr)
-
-    majorName = input("Enter the name of the major: ")
-    majorId = getMajor(majorName, majors)
-    print("Major ID is:", majorId)
-
-    json.dump(
-        getArticulations(fyId, cccId, yr, majorId),
-        open("output.json", "w"),
-        indent=4,
-    )
+    asyncio.run(main())

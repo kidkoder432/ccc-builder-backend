@@ -25,5 +25,5 @@ jobs:
       - name: Building Docker Container
         run: sam build --use-container
       - name: Deploy to AWS Lambda
-        run: sam deploy
+        run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
           

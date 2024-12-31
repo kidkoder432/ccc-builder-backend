@@ -8,14 +8,14 @@ async def parseArticulationRequirements(session, fyId, cccId, yr, majorId):
     yr = str(yr)
     majorId = str(majorId)
 
-    requiredCourses = []
+    requiredCourses = [{
+        "cccId": cccId,
+        "fyId": fyId,
+        "yr": yr,
+        "majorId": majorId
+    }]
 
-    cccId, cccName, cccCode = getCCCInfo(cccId)
-    fyId, fyName, fyCode = getFYInfo(fyId)
-
-    termName, termId = getYearInfo(yr)
-    majorData = await getMajorData(session, fyId, cccId, yr)
-    majorName = getMajorInfo(majorId, majorData)
+    termId = yr
 
     async with session.get(
         ARTICS_URL.format(key=majorId),

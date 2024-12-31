@@ -1,17 +1,11 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: >
-  Streaming Response with FastAPI on AWS Lambda
+Description: 'Streaming Response with FastAPI on AWS Lambda
 
-# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+  '
 Globals:
   Function:
     Timeout: 60
-    Cors:
-      AllowMethods: "'*'"
-      AllowHeaders: "'*'"
-      AllowOrigin: "'*'"
-
 Resources:
   PrimaryCCCFunction:
     Type: AWS::Serverless::Function
@@ -26,7 +20,9 @@ Resources:
         AuthType: NONE
         InvokeMode: RESPONSE_STREAM
       Tracing: Active
+      ImageUri: primarycccfunction:v1
     Metadata:
-      Dockerfile: Dockerfile
-      DockerContext: .
+      DockerContext: C:\Users\findp\assister
       DockerTag: v1
+      Dockerfile: Dockerfile
+      SamResourceId: PrimaryCCCFunction

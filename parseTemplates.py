@@ -8,12 +8,16 @@ async def parseArticulationRequirements(session, fyId, cccId, yr, majorId):
     yr = str(yr)
     majorId = str(majorId)
 
-    requiredCourses = [{
-        "cccId": cccId,
-        "fyId": fyId,
-        "yr": yr,
-        "majorId": majorId
-    }]
+    returnObj = {
+        "inputs": {
+            "cccId": cccId,
+            "fyId": fyId,
+            "yr": yr,
+            "majorId": majorId,
+        }
+    }
+
+    requiredCourses = []
 
     termId = yr
 
@@ -162,7 +166,9 @@ async def parseArticulationRequirements(session, fyId, cccId, yr, majorId):
                         obj["courses"] = reqs
                         groupObj["requiredCourses"].append(obj)
                     requiredCourses.append(groupObj)
-    return requiredCourses
+    
+    returnObj["requirements"] = requiredCourses
+    return returnObj
 
 
 async def main2():

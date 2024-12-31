@@ -13,7 +13,6 @@ def lambda_handler_primary(event, context):
         x = getArticulations(fyId, cccId, yr, majorId)
 
         articulations.append(x)
-        yield x
 
     return {"statusCode": 200, "body": json.dumps(articulations)}
 
@@ -35,7 +34,6 @@ def lambda_handler_whitelist(event, context):
         )
 
         articulatedCourses.append(x)
-        yield x
 
     return {"statusCode": 200, "body": json.dumps(articulatedCourses)}
 
@@ -50,7 +48,6 @@ def lambda_handler_template(event, context):
         x = parseArticulationRequirements(fyId, cccId, yr, majorId)
 
         reqs.append(x)
-        yield x
 
     return {
         "statusCode": 200,

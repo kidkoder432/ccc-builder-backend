@@ -22,9 +22,9 @@ Resources:
         AuthType: NONE
         InvokeMode: RESPONSE_STREAM
         Cors:
-          AllowMethods: "'*'"
-          AllowHeaders: "'*'"
-          AllowOrigin: "'*'"
+          AllowMethods: "*"
+          AllowHeaders: "*"
+          AllowOrigins: "*"
       Tracing: Active
     Metadata:
       Dockerfile: Dockerfile

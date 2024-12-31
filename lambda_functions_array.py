@@ -6,7 +6,7 @@ from parseTemplates import *
 def lambda_handler_primary(event, context):
 
     articulations = []
-    for item in event["body"]:
+    for item in json.loads(event["body"]):
 
         cccId, fyId, yr, majorId = parseBody(item)
 
@@ -41,7 +41,9 @@ def lambda_handler_whitelist(event, context):
 def lambda_handler_template(event, context):
 
     reqs = []
-    for item in event["body"]:
+    for item in json.loads(event["body"]):
+
+        print(item)
 
         cccId, fyId, yr, majorId = parseBody(item)
 

@@ -14,7 +14,9 @@ def parseArticulationRequirements(fyId, cccId, yr, majorId):
             "fyId": fyId,
             "yr": yr,
             "majorId": majorId
-        }
+        },
+
+        "requirements": []
     }
 
     requiredCourses = []
@@ -53,6 +55,9 @@ def parseArticulationRequirements(fyId, cccId, yr, majorId):
 
         if r.status_code == 200:
             templateAssets = json.loads(r.json()["result"]["templateAssets"])
+
+        else:
+            return returnObj
         for idx, item in enumerate(templateAssets):
             if item["type"] == "RequirementGroup":
 

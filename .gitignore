@@ -1,2 +1,3 @@
 venv/Lib
 *.json
+__pycache__/

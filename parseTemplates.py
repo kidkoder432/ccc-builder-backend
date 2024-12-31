@@ -8,14 +8,20 @@ def parseArticulationRequirements(fyId, cccId, yr, majorId):
     yr = str(yr)
     majorId = str(majorId)
 
+    returnObj = {
+        "inputs": {
+            "cccId": cccId,
+            "fyId": fyId,
+            "yr": yr,
+            "majorId": majorId
+        }
+    }
+
     requiredCourses = []
 
-    cccId, cccName, cccCode = getCCCInfo(cccId)
-    fyId, fyName, fyCode = getFYInfo(fyId)
+    termId = yr
 
-    termName, termId = getYearInfo(yr)
-    majorData = getMajorData(fyId, cccId, yr)
-    majorName = getMajorInfo(majorId, majorData)
+    
 
     headers = {
         "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
@@ -184,7 +190,9 @@ def parseArticulationRequirements(fyId, cccId, yr, majorId):
                     obj["courses"] = reqs
                     groupObj["requiredCourses"].append(obj)
                 requiredCourses.append(groupObj)
-    return requiredCourses
+    
+    returnObj["requirements"] = requiredCourses
+    return returnObj
 
 
 if __name__ == "__main__":

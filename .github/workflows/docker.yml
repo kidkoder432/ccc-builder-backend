@@ -1,7 +1,8 @@
 name: Deploy to AWS Lambda (Web Adapter)
-on: [push]
-branches:
-  - docker
+on: 
+  push:
+    branches:
+      - docker
 
 permissions:
   id-token: write   # This is required for requesting the JWT

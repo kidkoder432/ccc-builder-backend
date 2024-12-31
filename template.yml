@@ -3,7 +3,6 @@ Transform: AWS::Serverless-2016-10-31
 Description: >
   Streaming Response with FastAPI on AWS Lambda
 
-# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
     Timeout: 60
@@ -22,9 +21,12 @@ Resources:
         AuthType: NONE
         InvokeMode: RESPONSE_STREAM
         Cors:
-          AllowMethods: "*"
-          AllowHeaders: "*"
-          AllowOrigins: "*"
+          AllowMethods:
+            - "*"
+          AllowHeaders:
+            - "*"
+          AllowOrigins:
+            - "*"
       Tracing: Active
     Metadata:
       Dockerfile: Dockerfile

@@ -19,6 +19,13 @@ Resources:
       FunctionUrlConfig:
         AuthType: NONE
         InvokeMode: RESPONSE_STREAM
+        Cors:
+          AllowMethods:
+          - '*'
+          AllowHeaders:
+          - '*'
+          AllowOrigins:
+          - '*'
       Tracing: Active
       ImageUri: primarycccfunction:v1
     Metadata:

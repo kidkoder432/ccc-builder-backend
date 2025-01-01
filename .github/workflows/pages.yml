@@ -32,7 +32,8 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: docs    steps:
+        working-directory: docs    
+    steps:
     - name: Checkout
       uses: actions/checkout@v4
     - name: Setup Ruby

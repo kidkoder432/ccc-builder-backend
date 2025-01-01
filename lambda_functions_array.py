@@ -86,4 +86,9 @@ def parseBody(body={}):
         "majorId", "75/113/to/79/Major/fc50cced-05c2-43c7-7dd5-08dcb87d5deb"
     )
 
+    cccId = str(cccId)
+    fyId = str(fyId)
+    yr = str(yr)
+    
+
     return cccId, fyId, yr, majorId

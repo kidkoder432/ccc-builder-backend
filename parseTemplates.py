@@ -3,11 +3,6 @@ from getArticulationsFromPrimaryCCC import *
 
 def parseArticulationRequirements(fyId, cccId, yr, majorId):
 
-    fyId = str(fyId)
-    cccId = str(cccId)
-    yr = str(yr)
-    majorId = str(majorId)
-
     returnObj = {
         "inputs": {
             "cccId": cccId,

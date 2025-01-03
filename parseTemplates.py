@@ -13,8 +13,10 @@ async def parseArticulationRequirements(session, fyId, cccId, yr, majorId):
             "cccId": cccId,
             "fyId": fyId,
             "yr": yr,
-            "majorId": majorId,
-        }
+            "majorId": majorId
+        },
+
+        "requirements": []
     }
 
     requiredCourses = []

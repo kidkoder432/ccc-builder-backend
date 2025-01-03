@@ -99,13 +99,6 @@ async def getArticulations(session, fyId, cccId, yr, majorId):
     majorData = await getMajorData(session, fyId, cccId, yr)
     majorName = getMajorInfo(majorId, majorData)
 
-    returnObj["input"] = {
-        "cccId": cccId,
-        "fyId": fyId,
-        "yr": yr,
-        "majorId": majorId,
-    }
-
     returnObj["cccInfo"] = {"id": cccId, "name": cccName, "code": cccCode}
     returnObj["universityInfo"] = {"id": fyId, "name": fyName, "code": fyCode}
 

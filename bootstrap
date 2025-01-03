@@ -1,7 +1,0 @@
-#!/bin/sh
-
-cd $LAMBDA_TASK_ROOT
-
-ls /usr/local/bin
-
-/usr/local/bin/python3 runtime.py

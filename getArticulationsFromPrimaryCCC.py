@@ -172,7 +172,12 @@ def getArticulations(fyId, cccId, yr, majorId):
             print("Major: ", arts["result"]["name"])
             print("--- REQUIREMENTS ---")
             articulationData = json.loads(arts["result"]["articulations"])
+
+            json.dump(articulationData, open("articulations.json", "w"))
+
             templates = json.loads(arts["result"]["templateAssets"])
+            json.dump(templates, open("templates.json", "w"))
+
             # copy(json.dumps(templates, indent=4))
             for idx, item in enumerate(templates):
                 if item["type"] == "RequirementGroup":
@@ -290,7 +295,6 @@ def getArticulations(fyId, cccId, yr, majorId):
                             "articulationOptions": [],
                         }
                     )
-
                     for articulationOption in articulatedCourses:
                         print(
                             "--- Option {0} ---".format(
@@ -300,34 +304,73 @@ def getArticulations(fyId, cccId, yr, majorId):
 
                         option = []
                         note = ""
+
                         if articulationOption["type"] == "CourseGroup":
-                            for course in articulationOption["items"]:
-                                if course["type"] == "Course":
-                                    if course["attributes"]:
-                                        for attr in course["attributes"]:
-                                            note += f"{attr["content"]}; "
 
-                                    courseTitle = course["courseTitle"]
-                                    coursePrefix = course["prefix"]
-                                    courseNumber = course["courseNumber"]
-                                    courseId = str(course["courseIdentifierParentId"])
+                            if articulationOption["courseConjunction"] == "Or":
+                                print("OR")
+                                for course in articulationOption["items"]:
+                                    if course["type"] == "Course":
+                                        if course["attributes"]:
+                                            for attr in course["attributes"]:
+                                                note += f"{attr['content']}; "
 
-                                    option.append(
-                                        {
+                                        courseTitle = course["courseTitle"]
+                                        coursePrefix = course["prefix"]
+                                        courseNumber = course["courseNumber"]
+                                        courseId = str(
+                                            course["courseIdentifierParentId"]
+                                        )
+
+                                        option = {
                                             "courseTitle": courseTitle,
                                             "courseNumber": courseNumber,
                                             "coursePrefix": coursePrefix,
                                             "courseId": courseId,
                                         }
-                                    )
-                                    if note:
-                                        option[-1]["note"] = note
 
-                                    print(
-                                        f"  {courseTitle} ({coursePrefix} {courseNumber})"
-                                    )
-                                    if note:
-                                        print(f"\t{note}")
+                                        if note:
+                                            option["note"] = note
+
+                                        returnObj["articulatedCourses"][-1][
+                                            "articulationOptions"
+                                        ].append([option])
+
+                                        print(
+                                            f"  {courseTitle} ({coursePrefix} {courseNumber})"
+                                        )
+                                        if note:
+                                            print(f"\t{note}")
+                            else:
+                                for course in articulationOption["items"]:
+                                    if course["type"] == "Course":
+                                        if course["attributes"]:
+                                            for attr in course["attributes"]:
+                                                note += f"{attr["content"]}; "
+
+                                        courseTitle = course["courseTitle"]
+                                        coursePrefix = course["prefix"]
+                                        courseNumber = course["courseNumber"]
+                                        courseId = str(
+                                            course["courseIdentifierParentId"]
+                                        )
+
+                                        option.append(
+                                            {
+                                                "courseTitle": courseTitle,
+                                                "courseNumber": courseNumber,
+                                                "coursePrefix": coursePrefix,
+                                                "courseId": courseId,
+                                            }
+                                        )
+                                        if note:
+                                            option[-1]["note"] = note
+
+                                        print(
+                                            f"  {courseTitle} ({coursePrefix} {courseNumber})"
+                                        )
+                                        if note:
+                                            print(f"\t{note}")
                         returnObj["articulatedCourses"][-1][
                             "articulationOptions"
                         ].append(option)

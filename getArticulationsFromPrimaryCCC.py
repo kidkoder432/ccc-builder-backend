@@ -173,10 +173,7 @@ def getArticulations(fyId, cccId, yr, majorId):
             print("--- REQUIREMENTS ---")
             articulationData = json.loads(arts["result"]["articulations"])
 
-            json.dump(articulationData, open("articulations.json", "w"))
-
             templates = json.loads(arts["result"]["templateAssets"])
-            json.dump(templates, open("templates.json", "w"))
 
             # copy(json.dumps(templates, indent=4))
             for idx, item in enumerate(templates):

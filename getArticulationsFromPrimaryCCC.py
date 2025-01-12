@@ -307,66 +307,72 @@ def getArticulations(fyId, cccId, yr, majorId):
                             if articulationOption["courseConjunction"] == "Or":
                                 print("OR")
                                 for course in articulationOption["items"]:
-                                    if course["type"] == "Course":
-                                        if course["attributes"]:
-                                            for attr in course["attributes"]:
-                                                note += f"{attr['content']}; "
+                                    if course["type"] != "Course":
+                                        continue
+                                    if course["attributes"]:
+                                        for attr in course["attributes"]:
+                                            note += f"{attr['content']}; "
 
-                                        courseTitle = course["courseTitle"]
-                                        coursePrefix = course["prefix"]
-                                        courseNumber = course["courseNumber"]
-                                        courseId = str(
-                                            course["courseIdentifierParentId"]
-                                        )
+                                    courseTitle = course["courseTitle"]
+                                    coursePrefix = course["prefix"]
+                                    courseNumber = course["courseNumber"]
+                                    courseId = str(
+                                        course["courseIdentifierParentId"]
+                                    )
 
-                                        option = [{
+                                    option = [{
+                                        "courseTitle": courseTitle,
+                                        "courseNumber": courseNumber,
+                                        "coursePrefix": coursePrefix,
+                                        "courseId": courseId,
+                                    }]
+
+                                    if note:
+                                        option["note"] = note
+
+                                    print(
+                                        f"  {courseTitle} ({coursePrefix} {courseNumber})"
+                                    )
+                                    if note:
+                                        print(f"\t{note}")
+
+                                    returnObj["articulatedCourses"][-1][
+                                        "articulationOptions"
+                                    ].append(option)
+                            else:
+                                for course in articulationOption["items"]:
+                                    if course["type"] != "Course":
+                                        continue
+                                    if course["attributes"]:
+                                        for attr in course["attributes"]:
+                                            note += f"{attr["content"]}; "
+
+                                    courseTitle = course["courseTitle"]
+                                    coursePrefix = course["prefix"]
+                                    courseNumber = course["courseNumber"]
+                                    courseId = str(
+                                        course["courseIdentifierParentId"]
+                                    )
+
+                                    option.append(
+                                        {
                                             "courseTitle": courseTitle,
                                             "courseNumber": courseNumber,
                                             "coursePrefix": coursePrefix,
                                             "courseId": courseId,
-                                        }]
+                                        }
+                                    )
+                                    if note:
+                                        option[-1]["note"] = note
 
-                                        if note:
-                                            option["note"] = note
-
-                                        print(
-                                            f"  {courseTitle} ({coursePrefix} {courseNumber})"
-                                        )
-                                        if note:
-                                            print(f"\t{note}")
-                            else:
-                                for course in articulationOption["items"]:
-                                    if course["type"] == "Course":
-                                        if course["attributes"]:
-                                            for attr in course["attributes"]:
-                                                note += f"{attr["content"]}; "
-
-                                        courseTitle = course["courseTitle"]
-                                        coursePrefix = course["prefix"]
-                                        courseNumber = course["courseNumber"]
-                                        courseId = str(
-                                            course["courseIdentifierParentId"]
-                                        )
-
-                                        option.append(
-                                            {
-                                                "courseTitle": courseTitle,
-                                                "courseNumber": courseNumber,
-                                                "coursePrefix": coursePrefix,
-                                                "courseId": courseId,
-                                            }
-                                        )
-                                        if note:
-                                            option[-1]["note"] = note
-
-                                        print(
-                                            f"  {courseTitle} ({coursePrefix} {courseNumber})"
-                                        )
-                                        if note:
-                                            print(f"\t{note}")
-                        returnObj["articulatedCourses"][-1][
-                            "articulationOptions"
-                        ].append(option)
+                                    print(
+                                        f"  {courseTitle} ({coursePrefix} {courseNumber})"
+                                    )
+                                    if note:
+                                        print(f"\t{note}")
+                                returnObj["articulatedCourses"][-1][
+                                    "articulationOptions"
+                                ].append(option)
 
                 elif articulation["articulation"]["type"] == "Series":
 

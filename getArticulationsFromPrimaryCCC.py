@@ -319,19 +319,15 @@ def getArticulations(fyId, cccId, yr, majorId):
                                             course["courseIdentifierParentId"]
                                         )
 
-                                        option = {
+                                        option = [{
                                             "courseTitle": courseTitle,
                                             "courseNumber": courseNumber,
                                             "coursePrefix": coursePrefix,
                                             "courseId": courseId,
-                                        }
+                                        }]
 
                                         if note:
                                             option["note"] = note
-
-                                        returnObj["articulatedCourses"][-1][
-                                            "articulationOptions"
-                                        ].append([option])
 
                                         print(
                                             f"  {courseTitle} ({coursePrefix} {courseNumber})"
